@@ -1,0 +1,71 @@
+```
+# Android
+*.apk
+*.aar
+*.dex
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.properties
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Log Files
+*.log
+
+# Android Studio
+*.iml
+*.hprof
+*.lock
+*.swp
+.DS_Store
+Thumbs.db
+
+# Built application files
+bin/
+gen/
+out/
+
+# Unit test results
+test-results/
+*.xml
+
+# Version control
+.vcs/
+
+# Coverage reports
+coverage/
+*.ec
+
+# Debug
+debug.keystore
+.release-signing.properties
+.signing/
+
+# Crashlytics generated file
+crashlytics-build.properties
+
+# External native build folder generated in Android Studio 2.2 and later
+.externalNativeBuild
+.cxx/
+
+# NDK
+obj/
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.ipr
+*.iml
+
+# Keystore
+*.keystore
+*.jks
+
+# Environment variable files
+.env
+.env.local
+*.env
+```
