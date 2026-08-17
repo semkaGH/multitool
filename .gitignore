@@ -1,0 +1,86 @@
+```
+# Build artifacts
+build/
+*.apk
+*.aar
+*.jar
+
+# Gradle
+.gradle/
+!gradle/wrapper/gradle-wrapper.properties
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Log files
+*.log
+
+# Android Studio Navigation editor temp files
+.navigation/
+
+# Android Studio profiler output
+*.hprof
+
+# Backup for IonicCordovaPlugin.java
+*.bak
+
+# Unit test reports
+**/test-results/**
+**/build/test-results/**
+
+# Code coverage reports
+**/build/reports/coverage/**
+
+# Version control
+.vcs/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Python (if any Python files exist in the project)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# Node.js (if any JS/TS files exist in the project)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Compiled JavaScript (if any JS/TS files exist in the project)
+dist/
+out/
+build/
+*.min.js
+*.bundle.js
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# TypeScript
+*.tsbuildinfo
+```

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MultiTool</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">Главная</string>
+    <string name="nav_calculator">Калькулятор</string>
+    <string name="nav_minecraft">Minecraft Анализ</string>
+    <string name="nav_downloader">YouTube Загрузка</string>
+    <string name="nav_settings">Настройки</string>
+    <string name="nav_about">О приложении</string>
+    
+    <!-- Home Screen -->
+    <string name="home_welcome">Добро пожаловать в MultiTool!</string>
+    <string name="home_description">Выберите инструмент из меню ниже</string>
+    
+    <!-- Calculator -->
+    <string name="calc_title">Калькулятор</string>
+    <string name="calc_clear">C</string>
+    <string name="calc_delete">⌫</string>
+    <string name="calc_equals">=</string>
+    
+    <!-- Minecraft Analysis -->
+    <string name="mc_title">Анализ ошибок Minecraft</string>
+    <string name="mc_mode_normal">Обычный режим</string>
+    <string name="mc_mode_ai">ИИ Анализ</string>
+    <string name="mc_paste_log">Вставьте лог ошибки сюда</string>
+    <string name="mc_analyze">Анализировать</string>
+    <string name="mc_result">Результат анализа</string>
+    <string name="mc_ai_provider">Провайдер ИИ</string>
+    <string name="mc_api_key">API Ключ</string>
+    
+    <!-- YouTube Downloader -->
+    <string name="yt_title">Загрузка с YouTube</string>
+    <string name="yt_paste_url">Вставьте ссылку на видео</string>
+    <string name="yt_fetch">Получить информацию</string>
+    <string name="yt_quality">Качество</string>
+    <string name="yt_format_mp4">MP4 (Видео)</string>
+    <string name="yt_format_mp3">MP3 (Аудио)</string>
+    <string name="yt_download">Скачать</string>
+    <string name="yt_downloading">Загрузка…</string>
+    
+    <!-- Settings -->
+    <string name="settings_title">Настройки</string>
+    <string name="settings_auto_update">Автообновление</string>
+    <string name="settings_dark_mode">Тёмная тема</string>
+    <string name="settings_language">Язык</string>
+    <string name="settings_download_path">Путь загрузок</string>
+    <string name="settings_clear_cache">Очистить кэш</string>
+    
+    <!-- About -->
+    <string name="about_title">О приложении</string>
+    <string name="about_version">Версия</string>
+    <string name="about_description">MultiTool - многофункциональное приложение для Android</string>
+    <string name="about_developer">Разработчик</string>
+    
+    <!-- Common -->
+    <string name="common_loading">Загрузка…</string>
+    <string name="common_error">Ошибка</string>
+    <string name="common_success">Успешно</string>
+    <string name="common_cancel">Отмена</string>
+    <string name="common_retry">Повторить</string>
+</resources>
