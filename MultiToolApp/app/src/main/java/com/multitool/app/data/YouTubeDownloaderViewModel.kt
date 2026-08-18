@@ -46,21 +46,9 @@ class YouTubeDownloaderViewModel : ViewModel() {
     private val _errorMessage = MutableStateFlow("")
     val errorMessage: StateFlow<String> = _errorMessage.asStateFlow()
     
-    // Expose setters for Compose
-    var videoUrl by _videoUrl
-    var videoTitle by _videoTitle
-    var selectedFormat by _selectedFormat
-    var selectedQuality by _selectedQuality
-    var qualityExpanded by _qualityExpanded
-    var isLoading by _isLoading
-    var isDownloading by _isDownloading
-    var downloadProgress by _downloadProgress
-    var errorMessage by _errorMessage
-    var availableQualities by _availableQualities
-    
     fun updateVideoUrl(url: String) {
         _videoUrl.value = url
-        errorMessage = ""
+        _errorMessage.value = ""
     }
     
     fun updateSelectedFormat(format: String) {
@@ -71,7 +59,7 @@ class YouTubeDownloaderViewModel : ViewModel() {
         } else {
             listOf("1080p", "720p", "480p", "360p")
         }
-        _selectedQuality.value = availableQualities.first()
+        _selectedQuality.value = _availableQualities.value.first()
     }
     
     fun updateSelectedQuality(quality: String) {
@@ -84,8 +72,8 @@ class YouTubeDownloaderViewModel : ViewModel() {
     
     fun fetchVideoInfo() {
         viewModelScope.launch {
-            isLoading = true
-            errorMessage = ""
+            _isLoading.value = true
+            _errorMessage.value = ""
             
             try {
                 // Simulate fetching video info
@@ -93,37 +81,37 @@ class YouTubeDownloaderViewModel : ViewModel() {
                 delay(1500)
                 
                 // Extract video ID from URL (simplified)
-                val videoId = extractVideoId(videoUrl)
+                val videoId = extractVideoId(_videoUrl.value)
                 if (videoId != null) {
-                    videoTitle = "Demo Video Title - Sample YouTube Video ($videoId)"
+                    _videoTitle.value = "Demo Video Title - Sample YouTube Video ($videoId)"
                 } else {
-                    errorMessage = "Неверная ссылка на YouTube"
+                    _errorMessage.value = "Неверная ссылка на YouTube"
                 }
             } catch (e: Exception) {
-                errorMessage = "Ошибка получения информации: ${e.message}"
+                _errorMessage.value = "Ошибка получения информации: ${e.message}"
             } finally {
-                isLoading = false
+                _isLoading.value = false
             }
         }
     }
     
     fun downloadVideo(context: Context) {
         viewModelScope.launch {
-            isDownloading = true
-            downloadProgress = 0
+            _isDownloading.value = true
+            _downloadProgress.value = 0
             
             try {
                 // Simulate download process
                 // In a real implementation, this would download the actual video
                 val downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                val fileName = "${videoTitle.substring(0..50).replace(Regex("[^a-zA-Z0-9]"), "_")}.${selectedFormat}"
+                val fileName = "${_videoTitle.value.substring(0..50).replace(Regex("[^a-zA-Z0-9]"), "_")}.${_selectedFormat.value}"
                 val file = File(downloadDir, "MultiTool/$fileName")
                 file.parentFile?.mkdirs()
                 
                 // Simulate download progress
                 for (i in 0..100 step 5) {
                     delay(200)
-                    downloadProgress = i
+                    _downloadProgress.value = i
                 }
                 
                 // Create dummy file to simulate download
@@ -131,14 +119,14 @@ class YouTubeDownloaderViewModel : ViewModel() {
                     fos.write("Demo content - This is a placeholder".toByteArray())
                 }
                 
-                errorMessage = ""
+                _errorMessage.value = ""
             } catch (e: Exception) {
-                errorMessage = "Ошибка загрузки: ${e.message}"
+                _errorMessage.value = "Ошибка загрузки: ${e.message}"
             } finally {
-                isDownloading = false
-                if (downloadProgress >= 100) {
+                _isDownloading.value = false
+                if (_downloadProgress.value >= 100) {
                     delay(1000)
-                    downloadProgress = 0
+                    _downloadProgress.value = 0
                 }
             }
         }

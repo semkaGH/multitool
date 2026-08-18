@@ -22,6 +22,17 @@ fun YouTubeDownloaderScreen(onBack: () -> Unit) {
     val viewModel: YouTubeDownloaderViewModel = viewModel()
     val context = LocalContext.current
     
+    val videoUrl by viewModel.videoUrl.collectAsState()
+    val videoTitle by viewModel.videoTitle.collectAsState()
+    val selectedFormat by viewModel.selectedFormat.collectAsState()
+    val selectedQuality by viewModel.selectedQuality.collectAsState()
+    val availableQualities by viewModel.availableQualities.collectAsState()
+    val qualityExpanded by viewModel.qualityExpanded.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val isDownloading by viewModel.isDownloading.collectAsState()
+    val downloadProgress by viewModel.downloadProgress.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
+    
     // Permission launcher for Android 13+
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -56,13 +67,13 @@ fun YouTubeDownloaderScreen(onBack: () -> Unit) {
         ) {
             // URL Input
             OutlinedTextField(
-                value = viewModel.videoUrl,
+                value = videoUrl,
                 onValueChange = { viewModel.updateVideoUrl(it) },
                 label = { Text("Вставьте ссылку на видео") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 trailingIcon = {
-                    if (viewModel.videoUrl.isNotBlank()) {
+                    if (videoUrl.isNotBlank()) {
                         IconButton(onClick = { viewModel.updateVideoUrl("") }) {
                             Icon(
                                 androidx.compose.material.icons.Icons.Default.Clear,
@@ -81,9 +92,9 @@ fun YouTubeDownloaderScreen(onBack: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-                enabled = viewModel.videoUrl.isNotBlank() && !viewModel.isLoading
+                enabled = videoUrl.isNotBlank() && !isLoading
             ) {
-                if (viewModel.isLoading) {
+                if (isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
                         color = MaterialTheme.colorScheme.onPrimary
@@ -98,7 +109,7 @@ fun YouTubeDownloaderScreen(onBack: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
             
             // Video Info Display
-            if (viewModel.videoTitle.isNotBlank()) {
+            if (videoTitle.isNotBlank()) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -107,7 +118,7 @@ fun YouTubeDownloaderScreen(onBack: () -> Unit) {
                         modifier = Modifier.padding(16.dp)
                     ) {
                         Text(
-                            text = viewModel.videoTitle,
+                            text = videoTitle,
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
@@ -124,14 +135,14 @@ fun YouTubeDownloaderScreen(onBack: () -> Unit) {
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             FilterChip(
-                                selected = viewModel.selectedFormat == "mp4",
+                                selected = selectedFormat == "mp4",
                                 onClick = { viewModel.updateSelectedFormat("mp4") },
                                 label = { Text("MP4 (Видео)") },
                                 modifier = Modifier.weight(1f)
                             )
                             
                             FilterChip(
-                                selected = viewModel.selectedFormat == "mp3",
+                                selected = selectedFormat == "mp3",
                                 onClick = { viewModel.updateSelectedFormat("mp3") },
                                 label = { Text("MP3 (Аудио)") },
                                 modifier = Modifier.weight(1f)
@@ -148,15 +159,15 @@ fun YouTubeDownloaderScreen(onBack: () -> Unit) {
                         )
                         
                         ExposedDropdownMenuBox(
-                            expanded = viewModel.qualityExpanded,
+                            expanded = qualityExpanded,
                             onExpandedChange = { viewModel.updateQualityExpanded(it) }
                         ) {
                             OutlinedTextField(
-                                value = viewModel.selectedQuality,
+                                value = selectedQuality,
                                 onValueChange = {},
                                 readOnly = true,
                                 trailingIcon = { 
-                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.qualityExpanded) 
+                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = qualityExpanded) 
                                 },
                                 modifier = Modifier
                                     .menuAnchor()
@@ -164,10 +175,10 @@ fun YouTubeDownloaderScreen(onBack: () -> Unit) {
                             )
                             
                             ExposedDropdownMenu(
-                                expanded = viewModel.qualityExpanded,
+                                expanded = qualityExpanded,
                                 onDismissRequest = { viewModel.updateQualityExpanded(false) }
                             ) {
-                                viewModel.availableQualities.forEach { quality ->
+                                availableQualities.forEach { quality ->
                                     DropdownMenuItem(
                                         text = { Text(quality) },
                                         onClick = {
@@ -193,25 +204,25 @@ fun YouTubeDownloaderScreen(onBack: () -> Unit) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(50.dp),
-                            enabled = !viewModel.isDownloading
+                            enabled = !isDownloading
                         ) {
-                            if (viewModel.isDownloading) {
+                            if (isDownloading) {
                                 CircularProgressIndicator(
                                     modifier = Modifier.size(24.dp),
                                     color = MaterialTheme.colorScheme.onPrimary
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Загрузка… ${viewModel.downloadProgress}%")
+                                Text("Загрузка… $downloadProgress%")
                             } else {
                                 Text("Скачать")
                             }
                         }
                         
                         // Progress indicator
-                        if (viewModel.isDownloading) {
+                        if (isDownloading) {
                             Spacer(modifier = Modifier.height(8.dp))
                             LinearProgressIndicator(
-                                progress = viewModel.downloadProgress / 100f,
+                                progress = downloadProgress / 100f,
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
@@ -220,7 +231,7 @@ fun YouTubeDownloaderScreen(onBack: () -> Unit) {
             }
             
             // Error message
-            if (viewModel.errorMessage.isNotBlank()) {
+            if (errorMessage.isNotBlank()) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -229,7 +240,7 @@ fun YouTubeDownloaderScreen(onBack: () -> Unit) {
                     )
                 ) {
                     Text(
-                        text = viewModel.errorMessage,
+                        text = errorMessage,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onErrorContainer,
                         modifier = Modifier.padding(16.dp)

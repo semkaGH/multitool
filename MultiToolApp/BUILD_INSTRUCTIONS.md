@@ -1,187 +1,132 @@
 # 📱 Инструкция по сборке APK для MultiTool App
 
-## 📋 Требования
-
-### Обязательные:
-- **Android Studio** (рекомендуется последняя версия)
-  - Скачать: https://developer.android.com/studio
-- **JDK 17** (встроен в Android Studio)
-
-### Опционально (для сборки через командную строку):
-- Установленная переменная окружения `ANDROID_HOME`
-- Командная строка или терминал
+## ✅ Быстрый старт (3 способа)
 
 ---
 
-## 🔧 Способ 1: Сборка через Android Studio (Рекомендуется)
+### **Способ 1: Через Android Studio** (самый простой)
 
-### Шаг 1: Откройте проект
-1. Запустите **Android Studio**
-2. Нажмите **"Open an Existing Project"**
-3. Выберите папку `/workspace/MultiToolApp`
-4. Дождитесь завершения синхронизации Gradle
-
-### Шаг 2: Настройте сборку (если нужно)
-1. Откройте `app/build.gradle.kts`
-2. Проверьте версию приложения в `versionName = "1.0.0"`
-3. При необходимости измените `versionCode`
-
-### Шаг 3: Сборка Debug APK (для тестирования)
-1. В меню выберите: **Build → Build Bundle(s) / APK(s) → Build APK(s)**
-2. Дождитесь завершения сборки
-3. APK файл будет создан по пути:
-   ```
-   /workspace/MultiToolApp/app/build/outputs/apk/debug/app-debug.apk
-   ```
-
-### Шаг 4: Сборка Release APK (для публикации)
-
-#### Вариант A: Без подписи (только для тестов)
-1. В меню: **Build → Generate Signed Bundle / APK**
-2. Выберите **APK**
-3. Создайте новый ключ или используйте существующий
-4. Выберите сборку **release**
-5. Нажмите **Finish**
-
-#### Вариант B: С подписью (для Google Play)
-1. Создайте keystore файл:
-   ```bash
-   keytool -genkey -v -keystore ~/multitool-release-key.jks \
-     -keyalg RSA -keysize 2048 -validity 10000 -alias multitool
-   ```
-
-2. Добавьте в `gradle.properties` (в корне проекта):
-   ```properties
-   MULTITOOL_STORE_FILE=/path/to/multitool-release-key.jks
-   MULTITOOL_STORE_PASSWORD=ваш_пароль
-   MULTITOOL_KEY_ALIAS=multitool
-   MULTITOOL_KEY_PASSWORD=ваш_пароль_ключа
-   ```
-
-3. Обновите `app/build.gradle.kts`, добавив signingConfigs:
-   ```kotlin
-   android {
-       signingConfigs {
-           create("release") {
-               storeFile = file(System.getenv("MULTITOOL_STORE_FILE") ?: "path/to/keystore.jks")
-               storePassword = System.getenv("MULTITOOL_STORE_PASSWORD") ?: ""
-               keyAlias = System.getenv("MULTITOOL_KEY_ALIAS") ?: ""
-               keyPassword = System.getenv("MULTITOOL_KEY_PASSWORD") ?: ""
-           }
-       }
-       buildTypes {
-           release {
-               isMinifyEnabled = true
-               proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-               signingConfig = signingConfigs.getByName("release")
-           }
-       }
-   }
-   ```
-
-4. Соберите: **Build → Generate Signed Bundle / APK**
+1. Откройте **Android Studio**
+2. Нажмите **Open Project** → выберите папку `/workspace/MultiToolApp`
+3. Дождитесь синхронизации Gradle
+4. В меню: **Build → Build Bundle(s)/APK(s) → Build APK(s)**
+5. Готовый APK будет в: `app/build/outputs/apk/debug/app-debug.apk`
 
 ---
 
-## 💻 Способ 2: Сборка через командную строку
+### **Способ 2: Через командную строку**
 
-### Шаг 1: Перейдите в директорию проекта
 ```bash
 cd /workspace/MultiToolApp
-```
-
-### Шаг 2: Сборка Debug APK
-```bash
 ./gradlew assembleDebug
 ```
 
-APK будет создан по пути:
+APK появится в: `app/build/outputs/apk/debug/app-debug.apk`
+
+**Примечание:** Для сборки через консоль требуется установленный Android SDK.
+Укажите путь к SDK в файле `local.properties`:
 ```
-app/build/outputs/apk/debug/app-debug.apk
+sdk.dir=/путь/к/вашему/android-sdk
 ```
 
-### Шаг 3: Сборка Release APK
+Или установите переменную окружения:
 ```bash
-./gradlew assembleRelease
-```
-
-APK будет создан по пути:
-```
-app/build/outputs/apk/release/app-release-unsigned.apk
-```
-
-### Шаг 4: Очистка и пересборка (если есть ошибки)
-```bash
-./gradlew clean
-./gradlew assembleRelease
+export ANDROID_HOME=/путь/к/вашему/android-sdk
 ```
 
 ---
 
-## 🚀 Способ 3: Быстрая сборка одной командой
+### **Способ 3: Release версия (оптимизированная)**
 
 ```bash
-cd /workspace/MultiToolApp && ./gradlew clean assembleDebug --stacktrace
+cd /workspace/MultiToolApp
+./gradlew clean assembleRelease
 ```
 
-После успешной сборки скопируйте APK:
-```bash
-cp app/build/outputs/apk/debug/app-debug.apk ~/MultiTool.apk
-```
+APK будет в: `app/build/outputs/apk/release/app-release-unsigned.apk`
+
+**Важно:** Для release версии требуется подпись (keystore).
 
 ---
 
-## 📲 Установка APK на устройство
+## 📲 Установка на телефон
 
-### Через USB:
-1. Включите **Отладку по USB** на устройстве
-2. Подключите устройство к компьютеру
-3. Выполните команду:
-   ```bash
-   adb install /workspace/MultiToolApp/app/build/outputs/apk/debug/app-debug.apk
-   ```
-
-### Через файловый менеджер:
 1. Скопируйте APK файл на устройство
 2. Откройте файловый менеджер
-3. Нажмите на APK файл и разрешите установку из неизвестных источников
+3. Нажмите на APK и разрешите установку
+4. Готово!
+
+Или через USB с отладкой:
+```bash
+adb install app/build/outputs/apk/debug/app-debug.apk
+```
 
 ---
 
-## ⚙️ Настройка перед сборкой
+## ⚙️ Что уже настроено в проекте:
 
-### 1. Разрешения (уже настроены в AndroidManifest.xml)
-Убедитесь, что в `AndroidManifest.xml` есть необходимые разрешения:
-```xml
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" 
-    android:maxSdkVersion="29" />
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" 
-    android:maxSdkVersion="32" />
-<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+✅ **Разрешения** в `AndroidManifest.xml`:
+- Интернет (для загрузчика YouTube и ИИ)
+- Доступ к файлам (для скачивания)
+- Фоновые службы (для загрузок)
+
+✅ **Gradle конфигурация**:
+- SDK 34, минимальный API 24 (Android 7.0+)
+- Kotlin + Jetpack Compose
+- Material Design 3 с иконками
+- Все необходимые зависимости
+
+✅ **Инструменты сборки**:
+- `gradlew` скрипт создан
+- Версии Gradle и плагинов настроены
+
+---
+
+## 🔧 Исправленные ошибки компиляции:
+
+1. **ViewModel StateFlow** - заменено делегирование `by` на правильное использование `_field.value`
+   - Файлы: `MinecraftAnalyzerViewModel.kt`, `YouTubeDownloaderViewModel.kt`
+
+2. **Compose StateFlow коллекция** - добавлено `collectAsState()` во всех экранах
+   - Файлы: `MinecraftAnalysisScreen.kt`, `YouTubeDownloaderScreen.kt`
+
+3. **Material Icons** - добавлена зависимость `material-icons-extended:1.6.0`
+   - Файл: `app/build.gradle.kts`
+
+4. **SettingsViewModel** - удалён несуществующий класс, настройки перенесены прямо в Screen
+   - Файл: `SettingsScreen.kt`
+
+5. **HorizontalDivider** - используется из Material3 1.2.0+
+
+6. **onValueChange** - теперь вызывает методы `updateField()` вместо присваивания
+
+---
+
+## 📋 Полная инструкция
+
+### Требования:
+- **Android Studio** (рекомендуется последняя версия)
+- **JDK 17** (встроен в Android Studio)
+- **Android SDK** (API 34)
+
+### Подробная сборка через Android Studio:
+
+1. Откройте проект в Android Studio
+2. Дождитесь завершения Gradle Sync
+3. Выберите: Build → Build APK(s)
+4. Найдите APK в: `app/build/outputs/apk/debug/`
+
+### Сборка Release версии с подписью:
+
+1. Создайте keystore:
+```bash
+keytool -genkey -v -keystore ~/multitool-release-key.jks \
+  -keyalg RSA -keysize 2048 -validity 10000 -alias multitool
 ```
 
-### 2. API ключи для ИИ-режима
-Создайте файл `local.properties` в корне проекта:
-```properties
-GEMINI_API_KEY=ваш_ключ_gemini
-OPENROUTER_API_KEY=ваш_ключ_openrouter
-```
+2. Добавьте signingConfig в `app/build.gradle.kts`
 
-### 3. Настройка ProGuard (для уменьшения размера APK)
-В `app/build.gradle.kts` для release сборки:
-```kotlin
-buildTypes {
-    release {
-        isMinifyEnabled = true
-        isShrinkResources = true
-        proguardFiles(
-            getDefaultProguardFile("proguard-android-optimize.txt"),
-            "proguard-rules.pro"
-        )
-    }
-}
-```
+3. Соберите: Build → Generate Signed Bundle/APK
 
 ---
 
@@ -189,60 +134,25 @@ buildTypes {
 
 ### Ошибка: SDK not found
 ```bash
-export ANDROID_HOME=$HOME/Android/Sdk
-export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+echo "sdk.dir=/path/to/android-sdk" > local.properties
 ```
 
 ### Ошибка: Java version mismatch
-Убедитесь, что используется JDK 17:
 ```bash
-java -version
+java -version  # Должна быть версия 17
 ```
 
 ### Ошибка: Not enough memory
-В `gradle.properties` увеличьте память:
+В `gradle.properties`:
 ```properties
-org.gradle.jvmargs=-Xmx4096m -Dfile.encoding=UTF-8
-```
-
-### Ошибка: Build failed with error 65280
-Очистите кэш:
-```bash
-./gradlew clean
-rm -rf ~/.gradle/caches/
-./gradlew assembleDebug
-```
-
----
-
-## 📊 Размер APK
-
-- **Debug APK**: ~50-80 MB (включает отладочную информацию)
-- **Release APK**: ~30-50 MB (оптимизированный)
-- **Release с ProGuard**: ~20-35 MB (максимально оптимизированный)
-
----
-
-## ✅ Проверка сборки
-
-После сборки проверьте APK:
-```bash
-ls -lh app/build/outputs/apk/debug/app-debug.apk
-```
-
-Проверьте подпись (для release):
-```bash
-jarsigner -verify -verbose -certs app/build/outputs/apk/release/app-release.apk
+org.gradle.jvmargs=-Xmx4096m
 ```
 
 ---
 
 ## 🎯 Готово!
 
-Теперь у вас есть рабочий APK файл MultiTool App, который можно:
-- Установить на любое Android устройство (Android 7.0+)
-- Распространять среди пользователей
-- Опубликовать в Google Play Store (требуется подпись)
+Теперь у вас есть рабочий APK файл MultiTool App!
 
 **Пути к готовым APK:**
 - Debug: `/workspace/MultiToolApp/app/build/outputs/apk/debug/app-debug.apk`

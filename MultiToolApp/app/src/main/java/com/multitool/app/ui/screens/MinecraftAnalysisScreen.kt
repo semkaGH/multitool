@@ -17,6 +17,13 @@ fun MinecraftAnalysisScreen(onBack: () -> Unit) {
     val viewModel: MinecraftAnalyzerViewModel = viewModel()
     var selectedMode by remember { mutableStateOf(MinecraftAnalyzerViewModel.AnalysisMode.NORMAL) }
     
+    val logText by viewModel.logText.collectAsState()
+    val apiKey by viewModel.apiKey.collectAsState()
+    val selectedProvider by viewModel.selectedProvider.collectAsState()
+    val expanded by viewModel.expanded.collectAsState()
+    val result by viewModel.result.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    
     Scaffold(
         topBar = {
             TopAppBar(
@@ -64,8 +71,8 @@ fun MinecraftAnalysisScreen(onBack: () -> Unit) {
             
             // Log Input
             OutlinedTextField(
-                value = viewModel.logText,
-                onValueChange = { viewModel.logText = it },
+                value = logText,
+                onValueChange = { viewModel.updateLogText(it) },
                 label = { Text("Вставьте лог ошибки сюда") },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -79,8 +86,8 @@ fun MinecraftAnalysisScreen(onBack: () -> Unit) {
             // AI Settings (only visible in AI mode)
             if (selectedMode == MinecraftAnalyzerViewModel.AnalysisMode.AI) {
                 OutlinedTextField(
-                    value = viewModel.apiKey,
-                    onValueChange = { viewModel.apiKey = it },
+                    value = apiKey,
+                    onValueChange = { viewModel.updateApiKey(it) },
                     label = { Text("API Ключ (Gemini/OpenRouter)") },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -88,30 +95,30 @@ fun MinecraftAnalysisScreen(onBack: () -> Unit) {
                 Spacer(modifier = Modifier.height(8.dp))
                 
                 ExposedDropdownMenuBox(
-                    expanded = viewModel.expanded,
-                    onExpandedChange = { viewModel.expanded = it }
+                    expanded = expanded,
+                    onExpandedChange = { viewModel.updateExpanded(it) }
                 ) {
                     OutlinedTextField(
-                        value = viewModel.selectedProvider,
+                        value = selectedProvider,
                         onValueChange = {},
                         readOnly = true,
                         label = { Text("Провайдер ИИ") },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.expanded) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                         modifier = Modifier
                             .menuAnchor()
                             .fillMaxWidth()
                     )
                     
                     ExposedDropdownMenu(
-                        expanded = viewModel.expanded,
-                        onDismissRequest = { viewModel.expanded = false }
+                        expanded = expanded,
+                        onDismissRequest = { viewModel.updateExpanded(false) }
                     ) {
                         listOf("Gemini", "OpenRouter").forEach { provider ->
                             DropdownMenuItem(
                                 text = { Text(provider) },
                                 onClick = {
-                                    viewModel.selectedProvider = provider
-                                    viewModel.expanded = false
+                                    viewModel.updateSelectedProvider(provider)
+                                    viewModel.updateExpanded(false)
                                 }
                             )
                         }
@@ -127,10 +134,10 @@ fun MinecraftAnalysisScreen(onBack: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-                enabled = viewModel.logText.isNotBlank() && 
-                         (selectedMode == MinecraftAnalyzerViewModel.AnalysisMode.NORMAL || viewModel.apiKey.isNotBlank())
+                enabled = logText.isNotBlank() && 
+                         (selectedMode == MinecraftAnalyzerViewModel.AnalysisMode.NORMAL || apiKey.isNotBlank())
             ) {
-                if (viewModel.isLoading) {
+                if (isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
                         color = MaterialTheme.colorScheme.onPrimary
@@ -145,7 +152,7 @@ fun MinecraftAnalysisScreen(onBack: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
             
             // Result Display
-            if (viewModel.result.isNotBlank()) {
+            if (result.isNotBlank()) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -159,7 +166,7 @@ fun MinecraftAnalysisScreen(onBack: () -> Unit) {
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
                         Text(
-                            text = viewModel.result,
+                            text = result,
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
