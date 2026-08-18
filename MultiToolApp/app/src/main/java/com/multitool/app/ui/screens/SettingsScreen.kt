@@ -8,12 +8,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.multitool.app.data.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(onBack: () -> Unit) {
-    val viewModel = remember { SettingsViewModel() }
+    var autoUpdateEnabled by remember { mutableStateOf(true) }
+    var darkModeEnabled by remember { mutableStateOf(false) }
+    var selectedLanguage by remember { mutableStateOf("Русский") }
+    var notificationsEnabled by remember { mutableStateOf(true) }
     
     Scaffold(
         topBar = {
@@ -42,8 +44,8 @@ fun SettingsScreen(onBack: () -> Unit) {
                 icon = Icons.Default.Update,
                 title = "Автообновление",
                 subtitle = "Автоматически проверять обновления",
-                checked = viewModel.autoUpdateEnabled,
-                onCheckedChange = { viewModel.autoUpdateEnabled = it }
+                checked = autoUpdateEnabled,
+                onCheckedChange = { autoUpdateEnabled = it }
             )
             
             HorizontalDivider()
@@ -53,8 +55,8 @@ fun SettingsScreen(onBack: () -> Unit) {
                 icon = Icons.Default.DarkMode,
                 title = "Тёмная тема",
                 subtitle = "Использовать тёмную тему оформления",
-                checked = viewModel.darkModeEnabled,
-                onCheckedChange = { viewModel.darkModeEnabled = it }
+                checked = darkModeEnabled,
+                onCheckedChange = { darkModeEnabled = it }
             )
             
             HorizontalDivider()
@@ -63,7 +65,7 @@ fun SettingsScreen(onBack: () -> Unit) {
             SettingsListItem(
                 icon = Icons.Default.Language,
                 title = "Язык",
-                subtitle = viewModel.selectedLanguage,
+                subtitle = selectedLanguage,
                 onClick = { /* Show language selector */ }
             )
             
@@ -84,7 +86,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                 icon = Icons.Default.DeleteSweep,
                 title = "Очистить кэш",
                 subtitle = "Удалить временные файлы",
-                onClick = { viewModel.clearCache() }
+                onClick = { /* Clear cache logic */ }
             )
             
             HorizontalDivider()
@@ -104,8 +106,8 @@ fun SettingsScreen(onBack: () -> Unit) {
                 icon = Icons.Default.Notifications,
                 title = "Уведомления",
                 subtitle = "Показывать уведомления о загрузках",
-                checked = viewModel.notificationsEnabled,
-                onCheckedChange = { viewModel.notificationsEnabled = it }
+                checked = notificationsEnabled,
+                onCheckedChange = { notificationsEnabled = it }
             )
         }
     }
@@ -197,16 +199,5 @@ fun SettingsListItem(
                 contentDescription = "Открыть"
             )
         }
-    }
-}
-
-class SettingsViewModel {
-    var autoUpdateEnabled by mutableStateOf(true)
-    var darkModeEnabled by mutableStateOf(false)
-    var selectedLanguage by mutableStateOf("Русский")
-    var notificationsEnabled by mutableStateOf(true)
-    
-    fun clearCache() {
-        // Implement cache clearing logic
     }
 }

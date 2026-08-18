@@ -47,29 +47,21 @@ class MinecraftAnalyzerViewModel : ViewModel() {
         _expanded.value = expanded
     }
     
-    // Expose setters for Compose
-    var logText by _logText
-    var apiKey by _apiKey
-    var selectedProvider by _selectedProvider
-    var expanded by _expanded
-    var result by _result
-    var isLoading by _isLoading
-    
     fun analyzeLog(mode: AnalysisMode) {
         viewModelScope.launch {
-            isLoading = true
-            result = ""
+            _isLoading.value = true
+            _result.value = ""
             
             try {
                 if (mode == AnalysisMode.NORMAL) {
-                    result = analyzeWithNormalMode(logText)
+                    _result.value = analyzeWithNormalMode(_logText.value)
                 } else {
-                    result = analyzeWithAI(logText, apiKey, selectedProvider)
+                    _result.value = analyzeWithAI(_logText.value, _apiKey.value, _selectedProvider.value)
                 }
             } catch (e: Exception) {
-                result = "Ошибка анализа: ${e.message}"
+                _result.value = "Ошибка анализа: ${e.message}"
             } finally {
-                isLoading = false
+                _isLoading.value = false
             }
         }
     }
